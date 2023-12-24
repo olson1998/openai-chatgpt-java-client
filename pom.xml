@@ -15,23 +15,54 @@
         <lombok.version>1.18.30</lombok.version>
         <reactor-netty-http.version>1.1.14</reactor-netty-http.version>
         <jackson-databind.version>2.16.0</jackson-databind.version>
+        <reactive-http-client.version>0.0.1-SNAPSHOT</reactive-http-client.version>
+        <org.assertj.assertj-core.version>3.24.2</org.assertj.assertj-core.version>
+        <org.junit.jupiter.junit-jupiter-api.version>5.10.0</org.junit.jupiter.junit-jupiter-api.version>
+        <org.junit.jupiter.junit-jupiter-params.version>5.10.0</org.junit.jupiter.junit-jupiter-params.version>
+        <org.junit.jupiter.junit-platform-launcher.version>1.10.0</org.junit.jupiter.junit-platform-launcher.version>
+        <org.mockito.mockito-core.version>5.4.0</org.mockito.mockito-core.version>
+        <org.mockito.mockito-juniut-jupiter.version>5.2.0</org.mockito.mockito-juniut-jupiter.version>
     </properties>
     <dependencies>
         <dependency>
-            <groupId>io.projectreactor.netty</groupId>
-            <artifactId>reactor-netty-http</artifactId>
-            <version>${reactor-netty-http.version}</version>
+            <groupId>com.github.olson1998.http</groupId>
+            <artifactId>reactive-netty-http-client</artifactId>
+            <version>${reactive-http-client.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>${jackson-databind.version}</version>
+            <groupId>com.github.olson1998.http</groupId>
+            <artifactId>reactive-http-jackson-serialization</artifactId>
+            <version>${reactive-http-client.version}</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>${lombok.version}</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <version>${org.assertj.assertj-core.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>${org.junit.jupiter.junit-jupiter-api.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-launcher</artifactId>
+            <version>${org.junit.jupiter.junit-platform-launcher.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-params</artifactId>
+            <version>${org.junit.jupiter.junit-jupiter-params.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
