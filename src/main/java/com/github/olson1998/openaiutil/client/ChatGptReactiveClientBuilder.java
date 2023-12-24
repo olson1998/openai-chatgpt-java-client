@@ -1,15 +1,14 @@
 package com.github.olson1998.openaiutil.client;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.olson1998.http.jacksonserial.json.JacksonJsonSerializationCodec;
 import com.github.olson1998.http.nettyclient.NettyReactiveHttpRequestExecutor;
-import io.netty.handler.logging.LogLevel;
+import com.github.olson1998.http.serialization.SerializationCodecs;
 import lombok.SneakyThrows;
 import lombok.ToString;
 import reactor.netty.http.client.HttpClient;
-import reactor.netty.transport.logging.AdvancedByteBufFormat;
 
 import java.net.URI;
-import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 @ToString
@@ -55,12 +54,14 @@ public class ChatGptReactiveClientBuilder implements ChatGptReactiveClient.Build
         Objects.requireNonNull(jsonObjectMapper);
         var httpClient = HttpClient.create()
                 .doOnRequest((httpClientRequest, connection) -> httpClientRequest.addHeader("Authorization", "Bearer "+ authorizationToken));
-        var restExec = new NettyReactiveHttpRequestExecutor(httpClient);
+       var codecs = new SerializationCodecs();
+       codecs.registerCodec(new JacksonJsonSerializationCodec(jsonObjectMapper));
+        var restExec = new NettyReactiveHttpRequestExecutor(httpClient, codecs);
         var chatCompletionUri = new URI(baseURI + chatCompletionPath);
         return new DefaultChatGptReactiveClient(
                 chatCompletionUri,
-                jsonObjectMapper,
-                restExec
+                restExec,
+                new DefaultChatGptErrorHandler(jsonObjectMapper)
         ); 
     }
 

@@ -8,9 +8,7 @@ import reactor.core.publisher.Mono;
 
 public interface ChatGptReactiveClient {
 
-    Mono<ChatCompletion> postChatRequest(ChatRequest chatRequest);
-
-    Mono<WebResponse<byte[]>> executePostChatRequest(ChatRequest chatRequest);
+    Mono<WebResponse<ChatCompletion>> postChatRequest(ChatRequest chatRequest);
 
     static Builder builder(){
         return new ChatGptReactiveClientBuilder();

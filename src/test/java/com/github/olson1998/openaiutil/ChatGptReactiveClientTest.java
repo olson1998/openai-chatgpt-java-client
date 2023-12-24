@@ -31,4 +31,5 @@ class ChatGptReactiveClientTest {
                 .jsonObjectMapper(new ObjectMapper())
                 .build();
     }
+
 }

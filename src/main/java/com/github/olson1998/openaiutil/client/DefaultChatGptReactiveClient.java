@@ -1,11 +1,11 @@
 package com.github.olson1998.openaiutil.client;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.olson1998.http.client.ReactiveHttpRequestExecutor;
 import com.github.olson1998.http.contract.WebRequest;
 import com.github.olson1998.http.contract.WebResponse;
-import com.github.olson1998.http.jacksonserial.json.JacksonJsonDeserializer;
-import com.github.olson1998.http.jacksonserial.json.JacksonJsonSerializer;
+import com.github.olson1998.http.exception.HttpRequestException;
+import com.github.olson1998.http.exception.HttpResponseException;
+import com.github.olson1998.http.serialization.ResponseMapping;
 import com.github.olson1998.openaiutil.model.ex.ChatCompletion;
 import com.github.olson1998.openaiutil.model.ex.ChatRequest;
 import lombok.AccessLevel;
@@ -15,42 +15,33 @@ import reactor.core.publisher.Mono;
 import java.net.URI;
 import java.time.Duration;
 
+import static org.apache.http.HttpHeaders.ACCEPT;
+import static org.apache.http.entity.ContentType.APPLICATION_JSON;
+
 @RequiredArgsConstructor(access = AccessLevel.MODULE)
 class DefaultChatGptReactiveClient implements ChatGptReactiveClient {
 
     private final URI chatCompletionURI;
 
-    private final ObjectMapper objectMapper;
-
     private final ReactiveHttpRequestExecutor reactiveHttpRequestExecutor;
 
-    @Override
-    public Mono<ChatCompletion> postChatRequest(ChatRequest chatRequest) {
-        var httpRequest = WebRequest.builder()
-                .uri(chatCompletionURI)
-                .httpMethod("POST")
-                .addHttpHeader("accept", "application/json")
-                .timeoutDuration(Duration.ofSeconds(30))
-                .build();
-        var jsonSerializer = new JacksonJsonSerializer<ChatRequest>(objectMapper);
-        var jsonDeserializer = new JacksonJsonDeserializer<>(objectMapper, ChatCompletion.class);
-        return reactiveHttpRequestExecutor.executeHttpRequest(
-                httpRequest,
-                chatRequest,
-                jsonSerializer,
-                jsonDeserializer
-        ).map(WebResponse::body);
-    }
+    private final ChatGptErrorHandler chatGptErrorHandler;
 
     @Override
-    public Mono<WebResponse<byte[]>> executePostChatRequest(ChatRequest chatRequest) {
+    public Mono<WebResponse<ChatCompletion>> postChatRequest(ChatRequest chatRequest) {
         var httpRequest = WebRequest.builder()
                 .uri(chatCompletionURI)
                 .httpMethod("POST")
-                .addHttpHeader("accept", "application/json")
+                .addHttpHeader(ACCEPT, APPLICATION_JSON.getMimeType())
                 .timeoutDuration(Duration.ofSeconds(30))
+                .contentType(APPLICATION_JSON)
+                .body(chatRequest)
                 .build();
-        return reactiveHttpRequestExecutor.executeHttpRequestForResponseBodyBytes(httpRequest, chatRequest, new JacksonJsonSerializer<>(objectMapper));
+        var responseMapping = new ResponseMapping<ChatCompletion>(){
+        };
+        return reactiveHttpRequestExecutor.sendHttpRequest(httpRequest, responseMapping)
+                .doOnError(HttpResponseException.class, chatGptErrorHandler::doHandleHttpResponseException)
+                .onErrorStop();
     }
 
 }
