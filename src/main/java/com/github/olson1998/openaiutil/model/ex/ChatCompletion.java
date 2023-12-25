@@ -25,6 +25,6 @@ public class ChatCompletion {
     private TokenUsage tokenUsage;
 
     @JsonProperty(value = "system_fingerprint")
-    private Object systemFingerprint;
+    private String systemFingerprint;
 
 }

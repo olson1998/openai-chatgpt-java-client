@@ -22,6 +22,8 @@
         <org.junit.jupiter.junit-platform-launcher.version>1.10.0</org.junit.jupiter.junit-platform-launcher.version>
         <org.mockito.mockito-core.version>5.4.0</org.mockito.mockito-core.version>
         <org.mockito.mockito-juniut-jupiter.version>5.2.0</org.mockito.mockito-juniut-jupiter.version>
+        <org.mockito.mockito-core.version>5.4.0</org.mockito.mockito-core.version>
+        <org.mockito.mockito-juniut-jupiter.version>5.2.0</org.mockito.mockito-juniut-jupiter.version>
     </properties>
     <dependencies>
         <dependency>
@@ -62,6 +64,18 @@
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-params</artifactId>
             <version>${org.junit.jupiter.junit-jupiter-params.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>${org.mockito.mockito-core.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+            <version>${org.mockito.mockito-juniut-jupiter.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

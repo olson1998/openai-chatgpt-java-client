@@ -2,9 +2,13 @@ package com.github.olson1998.openaiutil.exception;
 
 import com.github.olson1998.http.contract.WebResponse;
 import com.github.olson1998.openaiutil.model.ex.Error;
+import lombok.Getter;
+
+import java.util.Optional;
 
 public class OpenAiErrorResponseException extends OpenAiResponseException {
 
+    @Getter
     private final WebResponse<?> errorResponse;
 
     private OpenAiErrorResponseException(String message, WebResponse<?> errorResponse) {
@@ -13,7 +17,8 @@ public class OpenAiErrorResponseException extends OpenAiResponseException {
     }
 
     public static OpenAiErrorResponseException ofDeserializedError(WebResponse<Error>errorWebResponse){
-        var msg = "Observed Http response error during OpenAi API request execution, error: " + errorWebResponse.body();
+        var error = Optional.ofNullable(errorWebResponse.body()).map(Error::getError).map(String::valueOf).orElse("?");
+        var msg = "Observed Http response error during OpenAi API request execution, error: " + error;
         return new OpenAiErrorResponseException(msg, errorWebResponse);
     }
 

@@ -7,7 +7,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public enum ChatModel {
 
-    GPT40613("gpt-4-0613");
+    GPT40613("gpt-4-0613"),
+    GPT35TURBO1105("gpt-3.5-turbo-1106");
 
     private final String model;
 

@@ -1,6 +1,7 @@
 package com.github.olson1998.openaiutil.client;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.olson1998.http.client.ReactiveHttpRequestExecutor;
 import com.github.olson1998.http.contract.WebResponse;
 import com.github.olson1998.openaiutil.model.ex.ChatRequest;
 import com.github.olson1998.openaiutil.model.ex.ChatCompletion;
@@ -23,6 +24,8 @@ public interface ChatGptReactiveClient {
         Builder authorizationToken(String authorizationToken);
 
         Builder jsonObjectMapper(ObjectMapper objectMapper);
+
+        Builder reactiveHttpExecutor(ReactiveHttpRequestExecutor reactiveHttpRequestExecutor);
 
         ChatGptReactiveClient build();
     }
