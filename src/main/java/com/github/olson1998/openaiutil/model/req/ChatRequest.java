@@ -1,9 +1,10 @@
-package com.github.olson1998.openaiutil.model.ex;
+package com.github.olson1998.openaiutil.model.req;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.olson1998.openaiutil.model.chat.ChatModel;
 import com.github.olson1998.openaiutil.model.chat.ResponseFormat;
+import com.github.olson1998.openaiutil.model.ex.Message;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

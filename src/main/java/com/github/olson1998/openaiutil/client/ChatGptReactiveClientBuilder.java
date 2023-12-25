@@ -22,6 +22,8 @@ public class ChatGptReactiveClientBuilder implements ChatGptReactiveClient.Build
     private String baseURI;
     
     private String chatCompletionPath;
+
+    private String imageGenerationPath;
     
     private String authorizationToken;
     
@@ -38,6 +40,12 @@ public class ChatGptReactiveClientBuilder implements ChatGptReactiveClient.Build
     @Override
     public ChatGptReactiveClient.Builder chatCompletionPath(String path) {
         this.chatCompletionPath = path;
+        return this;
+    }
+
+    @Override
+    public ChatGptReactiveClient.Builder imageGenerationsPath(String path) {
+        this.imageGenerationPath = path;
         return this;
     }
 
@@ -67,8 +75,10 @@ public class ChatGptReactiveClientBuilder implements ChatGptReactiveClient.Build
         var restExec = resolveHttpRequestExec();
         restExec.addHttpHeader(AUTHORIZATION, "Bearer " + authorizationToken);
         var chatCompletionUri = new URI(baseURI + chatCompletionPath);
+        var imageGenerationsUri = new URI(baseURI + imageGenerationPath);
         return new DefaultChatGptReactiveClient(
                 chatCompletionUri,
+                imageGenerationsUri,
                 restExec,
                 new DefaultChatGptErrorHandler(jsonObjectMapper)
         ); 
