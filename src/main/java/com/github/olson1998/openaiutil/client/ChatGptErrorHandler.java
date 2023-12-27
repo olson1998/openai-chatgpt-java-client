@@ -1,8 +1,9 @@
 package com.github.olson1998.openaiutil.client;
 
-import com.github.olson1998.http.exception.HttpResponseException;
+import com.github.olson1998.http.client.exception.HttpResponseException;
+import com.github.olson1998.openaiutil.exception.OpenAiErrorResponseException;
 
 public interface ChatGptErrorHandler {
 
-    void doHandleHttpResponseException(HttpResponseException httpResponseException);
+    OpenAiErrorResponseException doHandleHttpResponseException(HttpResponseException httpResponseException);
 }

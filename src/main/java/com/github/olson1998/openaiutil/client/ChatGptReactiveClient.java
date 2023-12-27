@@ -1,11 +1,14 @@
 package com.github.olson1998.openaiutil.client;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.olson1998.http.ImageDownload;
 import com.github.olson1998.http.client.ReactiveHttpRequestExecutor;
 import com.github.olson1998.http.contract.WebResponse;
-import com.github.olson1998.openaiutil.model.ex.*;
+import com.github.olson1998.openaiutil.model.ex.ChatCompletion;
+import com.github.olson1998.openaiutil.model.ex.ImageGenerations;
 import com.github.olson1998.openaiutil.model.req.ChatRequest;
 import com.github.olson1998.openaiutil.model.req.ImageGenerationRequest;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public interface ChatGptReactiveClient {
@@ -13,6 +16,8 @@ public interface ChatGptReactiveClient {
     Mono<WebResponse<ChatCompletion>> postChatRequest(ChatRequest chatRequest);
 
     Mono<WebResponse<ImageGenerations>> postImageGenerationRequest(ImageGenerationRequest imageGenerationRequest);
+
+    Flux<ImageDownload> postImageGenerationRequestAndObtain(ImageGenerationRequest imageGenerationRequest);
 
     static Builder builder(){
         return new ChatGptReactiveClientBuilder();

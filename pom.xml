@@ -33,6 +33,11 @@
         </dependency>
         <dependency>
             <groupId>com.github.olson1998.http</groupId>
+            <artifactId>reactive-http-image-serialization</artifactId>
+            <version>${reactive-http-client.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.olson1998.http</groupId>
             <artifactId>reactive-http-jackson-serialization</artifactId>
             <version>${reactive-http-client.version}</version>
         </dependency>

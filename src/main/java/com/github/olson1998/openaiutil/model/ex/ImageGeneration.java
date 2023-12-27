@@ -12,8 +12,8 @@ import java.net.URI;
 @AllArgsConstructor
 public class ImageGeneration {
 
-    @JsonProperty(value = "reversed_prompt")
-    private String reversedPrompt;
+    @JsonProperty(value = "revised_prompt")
+    private String revisedPrompt;
 
     private URI url;
 }

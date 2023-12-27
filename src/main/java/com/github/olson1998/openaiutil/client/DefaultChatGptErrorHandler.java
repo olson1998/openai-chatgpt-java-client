@@ -1,12 +1,10 @@
 package com.github.olson1998.openaiutil.client;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.olson1998.http.client.exception.HttpResponseException;
 import com.github.olson1998.http.contract.ClientHttpResponse;
-import com.github.olson1998.http.contract.WebResponse;
-import com.github.olson1998.http.exception.ContentDeserializationException;
-import com.github.olson1998.http.exception.HttpResponseException;
+import com.github.olson1998.http.serialization.exception.ContentDeserializationException;
 import com.github.olson1998.openaiutil.exception.OpenAiErrorResponseException;
-import com.github.olson1998.openaiutil.exception.OpenAiResponseException;
 import com.github.olson1998.openaiutil.model.ex.Error;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +19,7 @@ class DefaultChatGptErrorHandler implements ChatGptErrorHandler{
     private final ObjectMapper objectMapper;
 
     @Override
-    public void doHandleHttpResponseException(HttpResponseException httpResponseException) {
+    public OpenAiErrorResponseException doHandleHttpResponseException(HttpResponseException httpResponseException) {
         var sc = httpResponseException.getStatusCode();
         var httpHeaders = httpResponseException.getHttpHeaders();
         var cause = httpResponseException.getCause();
@@ -31,10 +29,10 @@ class DefaultChatGptErrorHandler implements ChatGptErrorHandler{
         }
         if(body instanceof Error error){
             var webResponse = new ClientHttpResponse<>(sc, httpHeaders, error);
-            throw OpenAiErrorResponseException.ofDeserializedError(webResponse);
+            return OpenAiErrorResponseException.ofDeserializedError(webResponse);
         }else {
             var webResponse = new ClientHttpResponse<>(sc, httpHeaders, body);
-            throw OpenAiErrorResponseException.of(webResponse);
+            return OpenAiErrorResponseException.of(webResponse);
         }
     }
 

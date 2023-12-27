@@ -2,6 +2,7 @@ package com.github.olson1998.openaiutil.client;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.olson1998.http.client.ReactiveHttpRequestExecutor;
+import com.github.olson1998.http.imageserial.ImageSerializationCodec;
 import com.github.olson1998.http.jacksonserial.json.JacksonJsonSerializationCodec;
 import com.github.olson1998.http.nettyclient.NettyReactiveHttpRequestExecutor;
 import com.github.olson1998.http.serialization.SerializationCodecs;
@@ -93,6 +94,7 @@ public class ChatGptReactiveClientBuilder implements ChatGptReactiveClient.Build
         var httpClient = HttpClient.create();
         var codecs = new SerializationCodecs();
         codecs.registerCodec(new JacksonJsonSerializationCodec(jsonObjectMapper));
+        codecs.registerCodec(new ImageSerializationCodec());
         return new NettyReactiveHttpRequestExecutor(httpClient, codecs);
     }
 
