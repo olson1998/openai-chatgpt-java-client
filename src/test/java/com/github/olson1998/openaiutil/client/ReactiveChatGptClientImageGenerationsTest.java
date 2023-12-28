@@ -28,6 +28,7 @@ import static com.github.olson1998.http.HttpMethod.GET;
 import static com.github.olson1998.http.HttpMethod.POST;
 import static com.github.olson1998.http.util.ImageExtension.PNG;
 import static com.github.olson1998.openaiutil.model.req.ImageGenerationRequestTestModel.*;
+import static com.github.olson1998.openaiutil.model.req.ImageGenerationTestModel.*;
 import static org.apache.http.HttpHeaders.CONTENT_TYPE;
 import static org.apache.http.entity.ContentType.APPLICATION_JSON;
 import static org.assertj.core.api.Assertions.assertThat;
