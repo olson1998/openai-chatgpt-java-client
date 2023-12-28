@@ -2,9 +2,10 @@ package com.github.olson1998.openaiutil.client;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.olson1998.http.ImageDownload;
-import com.github.olson1998.http.client.ReactiveHttpRequestExecutor;
+import com.github.olson1998.http.client.ReactiveRestClient;
 import com.github.olson1998.http.contract.WebResponse;
 import com.github.olson1998.openaiutil.model.ex.ChatCompletion;
+import com.github.olson1998.openaiutil.model.ex.ImageGeneration;
 import com.github.olson1998.openaiutil.model.ex.ImageGenerations;
 import com.github.olson1998.openaiutil.model.req.ChatRequest;
 import com.github.olson1998.openaiutil.model.req.ImageGenerationRequest;
@@ -15,7 +16,7 @@ public interface ChatGptReactiveClient {
 
     Mono<WebResponse<ChatCompletion>> postChatRequest(ChatRequest chatRequest);
 
-    Mono<WebResponse<ImageGenerations>> postImageGenerationRequest(ImageGenerationRequest imageGenerationRequest);
+    <I extends ImageGeneration,G extends ImageGenerations<I>> Mono<WebResponse<G>> postImageGenerationRequest(ImageGenerationRequest imageGenerationRequest);
 
     Flux<ImageDownload> postImageGenerationRequestAndObtain(ImageGenerationRequest imageGenerationRequest);
 
@@ -35,7 +36,7 @@ public interface ChatGptReactiveClient {
 
         Builder jsonObjectMapper(ObjectMapper objectMapper);
 
-        Builder reactiveHttpExecutor(ReactiveHttpRequestExecutor reactiveHttpRequestExecutor);
+        Builder reactiveRestClient(ReactiveRestClient reactiveRestClient);
 
         ChatGptReactiveClient build();
     }

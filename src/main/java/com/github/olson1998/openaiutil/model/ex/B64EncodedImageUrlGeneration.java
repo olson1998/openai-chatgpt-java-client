@@ -8,10 +8,10 @@ import lombok.ToString;
 
 @Getter
 @Setter
-@ToString
-@EqualsAndHashCode
-public abstract class ImageGeneration {
+@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
+public class B64EncodedImageUrlGeneration extends ImageGeneration {
 
-    @JsonProperty(value = "revised_prompt")
-    private String revisedPrompt;
+    @JsonProperty(value = "b64_json")
+    private String b64Image;
 }

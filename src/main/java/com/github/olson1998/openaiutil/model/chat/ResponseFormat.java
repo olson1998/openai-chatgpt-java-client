@@ -10,7 +10,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public enum ResponseFormat {
 
-    JSON_OBJECT("json_object");
+    JSON_OBJECT("json_object"),
+    B64JSON("b64_json");
 
     private final String type;
 }

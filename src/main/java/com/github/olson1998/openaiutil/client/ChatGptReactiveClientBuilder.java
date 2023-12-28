@@ -1,17 +1,16 @@
 package com.github.olson1998.openaiutil.client;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.olson1998.http.client.ReactiveHttpRequestExecutor;
+import com.github.olson1998.http.client.ReactiveRestClient;
 import com.github.olson1998.http.imageserial.ImageSerializationCodec;
 import com.github.olson1998.http.jacksonserial.json.JacksonJsonSerializationCodec;
-import com.github.olson1998.http.nettyclient.NettyReactiveHttpRequestExecutor;
+import com.github.olson1998.http.nettyclient.NettyReactiveRestClient;
 import com.github.olson1998.http.serialization.SerializationCodecs;
 import lombok.SneakyThrows;
 import lombok.ToString;
 import reactor.netty.http.client.HttpClient;
 
 import java.net.URI;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -30,7 +29,7 @@ public class ChatGptReactiveClientBuilder implements ChatGptReactiveClient.Build
     
     private ObjectMapper jsonObjectMapper;
 
-    private ReactiveHttpRequestExecutor reactiveHttpRequestExecutor;
+    private ReactiveRestClient reactiveRestClient;
     
     @Override
     public ChatGptReactiveClient.Builder openAiBaseURI(String uri) {
@@ -63,7 +62,8 @@ public class ChatGptReactiveClientBuilder implements ChatGptReactiveClient.Build
     }
 
     @Override
-    public ChatGptReactiveClient.Builder reactiveHttpExecutor(ReactiveHttpRequestExecutor reactiveHttpRequestExecutor) {
+    public ChatGptReactiveClient.Builder reactiveRestClient(ReactiveRestClient reactiveRestClient) {
+        this.reactiveRestClient = reactiveRestClient;
         return this;
     }
 
@@ -73,29 +73,29 @@ public class ChatGptReactiveClientBuilder implements ChatGptReactiveClient.Build
         Objects.requireNonNull(baseURI);
         Objects.requireNonNull(chatCompletionPath);
         Objects.requireNonNull(jsonObjectMapper);
-        var restExec = resolveHttpRequestExec();
-        restExec.addHttpHeader(AUTHORIZATION, "Bearer " + authorizationToken);
+        var restClient = resolveRestClient();
+        restClient.addHttpHeader(AUTHORIZATION, "Bearer " + authorizationToken);
         var chatCompletionUri = new URI(baseURI + chatCompletionPath);
         var imageGenerationsUri = new URI(baseURI + imageGenerationPath);
         return new DefaultChatGptReactiveClient(
                 chatCompletionUri,
                 imageGenerationsUri,
-                restExec,
+                restClient,
                 new DefaultChatGptErrorHandler(jsonObjectMapper)
         ); 
     }
 
-    private ReactiveHttpRequestExecutor resolveHttpRequestExec(){
-        return Optional.ofNullable(reactiveHttpRequestExecutor)
+    private ReactiveRestClient resolveRestClient(){
+        return Optional.ofNullable(reactiveRestClient)
                 .orElseGet(this::buildDefault);
     }
 
-    private ReactiveHttpRequestExecutor buildDefault(){
+    private ReactiveRestClient buildDefault(){
         var httpClient = HttpClient.create();
         var codecs = new SerializationCodecs();
         codecs.registerCodec(new JacksonJsonSerializationCodec(jsonObjectMapper));
         codecs.registerCodec(new ImageSerializationCodec());
-        return new NettyReactiveHttpRequestExecutor(httpClient, codecs);
+        return new NettyReactiveRestClient(httpClient, codecs);
     }
 
 }

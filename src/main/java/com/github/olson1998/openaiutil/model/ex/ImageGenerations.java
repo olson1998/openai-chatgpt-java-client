@@ -8,10 +8,10 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ImageGenerations {
+public class ImageGenerations<I extends ImageGeneration> {
 
     @JsonProperty(value = "created")
     private Long creationTimestamp;
 
-    private ImageGeneration[] data;
+    private I[] data;
 }
