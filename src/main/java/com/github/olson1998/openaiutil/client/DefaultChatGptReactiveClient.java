@@ -1,17 +1,15 @@
 package com.github.olson1998.openaiutil.client;
 
-import com.github.olson1998.http.ImageDownload;
-import com.github.olson1998.http.ReadOnlyHttpHeaders;
 import com.github.olson1998.http.client.ReactiveRestClient;
 import com.github.olson1998.http.client.exception.HttpResponseException;
+import com.github.olson1998.http.client.util.Base64ImageUtil;
+import com.github.olson1998.http.contract.ImageDownload;
 import com.github.olson1998.http.contract.WebRequest;
 import com.github.olson1998.http.contract.WebResponse;
-import com.github.olson1998.http.serialization.ContentDeserializer;
 import com.github.olson1998.http.serialization.ResponseMapping;
-import com.github.olson1998.http.serialization.context.ContentSerializationContext;
 import com.github.olson1998.openaiutil.model.chat.ResponseFormat;
 import com.github.olson1998.openaiutil.model.ex.*;
-import com.github.olson1998.openaiutil.model.req.B64ImageUrlGenerationRequest;
+import com.github.olson1998.openaiutil.model.req.ImageBase64GenerationRequest;
 import com.github.olson1998.openaiutil.model.req.ChatRequest;
 import com.github.olson1998.openaiutil.model.req.CustomImageGenerationRequest;
 import com.github.olson1998.openaiutil.model.req.ImageGenerationRequest;
@@ -22,14 +20,11 @@ import reactor.core.publisher.Mono;
 
 import java.awt.image.BufferedImage;
 import java.net.URI;
-import java.util.Base64;
-import java.util.concurrent.atomic.AtomicReference;
 
 import static com.github.olson1998.http.HttpMethod.GET;
 import static com.github.olson1998.http.HttpMethod.POST;
 import static org.apache.http.HttpHeaders.ACCEPT;
 import static org.apache.http.entity.ContentType.APPLICATION_JSON;
-import static org.apache.http.entity.ContentType.IMAGE_PNG;
 
 @RequiredArgsConstructor(access = AccessLevel.MODULE)
 class DefaultChatGptReactiveClient implements ChatGptReactiveClient {
@@ -56,8 +51,8 @@ class DefaultChatGptReactiveClient implements ChatGptReactiveClient {
     }
 
     @Override
-    public <I extends ImageGeneration, G extends ImageGenerations<I>> Mono<WebResponse<G>> postImageGenerationRequest(ImageGenerationRequest imageGenerationRequest) {
-        ResponseMapping<G> responseMapping = createResponseMapping(imageGenerationRequest);
+    public Mono<WebResponse<ImageGenerations<ImageGeneration>>> postImageGenerationRequest(ImageGenerationRequest imageGenerationRequest) {
+        ResponseMapping<ImageGenerations<ImageGeneration>> responseMapping = createResponseMapping(imageGenerationRequest);
         var webRequest = WebRequest.builder()
                 .uri(imageGenerationsURI)
                 .httpMethod(POST)
@@ -69,10 +64,42 @@ class DefaultChatGptReactiveClient implements ChatGptReactiveClient {
     }
 
     @Override
+    public Mono<WebResponse<ImageGenerations<DefaultImageGeneration>>> postDefaultImageGenerationRequest(ImageGenerationRequest imageGenerationRequest) {
+        var request = ImageGenerationRequest.builder()
+                .model(imageGenerationRequest.getModel())
+                .numberOfImages(imageGenerationRequest.getNumberOfImages())
+                .prompt(imageGenerationRequest.getPrompt())
+                .size(imageGenerationRequest.getSize())
+                .quality(imageGenerationRequest.getQuality())
+                .build();
+        var webRequest = WebRequest.builder()
+                .uri(imageGenerationsURI)
+                .httpMethod(POST)
+                .contentType(APPLICATION_JSON)
+                .body(request)
+                .build();
+        return reactiveRestClient.sendHttpRequest(webRequest, new ResponseMapping<ImageGenerations<DefaultImageGeneration>>() {
+        }).onErrorMap(HttpResponseException.class, chatGptErrorHandler::doHandleHttpResponseException);
+    }
+
+    @Override
+    public Mono<WebResponse<ImageGenerations<ImageBase64Generation>>> postB64ImageGenerationRequest(ImageBase64GenerationRequest imageBase64GenerationRequest) {
+        var webRequest = WebRequest.builder()
+                .uri(imageGenerationsURI)
+                .httpMethod(POST)
+                .contentType(APPLICATION_JSON)
+                .body(imageBase64GenerationRequest)
+                .build();
+        return reactiveRestClient.sendHttpRequest(webRequest, new ResponseMapping<ImageGenerations<ImageBase64Generation>>() {
+        }).onErrorMap(HttpResponseException.class, chatGptErrorHandler::doHandleHttpResponseException);
+    }
+
+    @Override
     public Flux<ImageDownload> postImageGenerationRequestAndObtain(ImageGenerationRequest imageGenerationRequest) {
         var imageGenerationResponseMono = postImageGenerationRequest(imageGenerationRequest)
                 .map(WebResponse::body)
-                .map(ImageGenerations::getData);
+                .map(ImageGenerations::getData)
+                .onErrorStop();
         return imageGenerationResponseMono.flatMapMany(Flux::fromArray)
                 .flatMap(this::obtainImageGeneration);
     }
@@ -80,8 +107,8 @@ class DefaultChatGptReactiveClient implements ChatGptReactiveClient {
     private Mono<ImageDownload> obtainImageGeneration(ImageGeneration imageGeneration){
         if(imageGeneration instanceof DefaultImageGeneration defaultImageGeneration){
             return getImageGeneration(defaultImageGeneration);
-        } else if (imageGeneration instanceof B64EncodedImageUrlGeneration b64ImageGeneration) {
-            return readImageFromB64(b64ImageGeneration);
+        } else if (imageGeneration instanceof ImageBase64Generation imageBase64Generation) {
+            return readImageFromB64(imageBase64Generation);
         }else {
             throw new IllegalArgumentException("");
         }
@@ -99,42 +126,46 @@ class DefaultChatGptReactiveClient implements ChatGptReactiveClient {
                 .map(image -> new ImageDownload(uri, image));
     }
 
-    private Mono<ImageDownload> readImageFromB64(B64EncodedImageUrlGeneration b64EncodedImageUrlGeneration){
-        return Mono.just(b64EncodedImageUrlGeneration.getB64Image())
-                .map(b64 -> Base64.getDecoder().decode(b64))
+    private Mono<ImageDownload> readImageFromB64(ImageBase64Generation imageBase64Generation){
+        return Mono.just(imageBase64Generation.getB64Image())
                 .map(this::deserializeImage);
     }
 
-    private ImageDownload deserializeImage(byte[] imageBytes){
-        var codecRef = new AtomicReference<ContentDeserializer>();
-        reactiveRestClient.serializationCodecs(serializationCodecs -> codecRef.set(serializationCodecs.getContentDeserializer(IMAGE_PNG)));
-        var codec = codecRef.get();
-        var image = codec.deserialize(BufferedImage.class).apply(imageBytes, new ContentSerializationContext(IMAGE_PNG, new ReadOnlyHttpHeaders()));
-        return new ImageDownload(null, image);
+    private ImageDownload deserializeImage(String b64Image){
+        var imageRead = Base64ImageUtil.readBase64Image(b64Image);
+        return new ImageDownload(null, null, imageRead);
     }
 
-    private <I extends ImageGeneration, G extends ImageGenerations<I>>  ResponseMapping<G> createResponseMapping(ImageGenerationRequest imageGenerationRequest){
-        if(imageGenerationRequest instanceof B64ImageUrlGenerationRequest){
-            return (ResponseMapping<G>) b64Image();
+    private ResponseMapping<ImageGenerations<ImageGeneration>> createResponseMapping(ImageGenerationRequest imageGenerationRequest){
+        ResponseMapping<ImageGenerations<ImageGeneration>> imageGenerationsResponseMapping;
+        if(imageGenerationRequest instanceof ImageBase64GenerationRequest){
+            imageGenerationsResponseMapping = b64Image();
         } else if (imageGenerationRequest instanceof CustomImageGenerationRequest customRequest) {
             var responseFormat = customRequest.getResponseFormat();
-            if(responseFormat.equals(ResponseFormat.B64JSON.getType())){
-                return (ResponseMapping<G>) b64Image();
+            if(responseFormat == null){
+                imageGenerationsResponseMapping = defaultImageGeneration();
+            } else if(responseFormat.equals(ResponseFormat.B64JSON.getType())){
+                imageGenerationsResponseMapping = b64Image();
             }else {
                 return null;
             }
         }else {
-            return (ResponseMapping<G>) defaultImageGeneration();
+            imageGenerationsResponseMapping = defaultImageGeneration();
         }
+        return imageGenerationsResponseMapping;
     }
 
-    private ResponseMapping<ImageGenerations<DefaultImageGeneration>> defaultImageGeneration(){
-        return new ResponseMapping<>() {
+    private ResponseMapping<ImageGenerations<ImageGeneration>> defaultImageGeneration(){
+        var mapping = new ResponseMapping<ImageGenerations<DefaultImageGeneration>>(){
+        };
+        return new ResponseMapping<>(mapping.getPojoType()) {
         };
     }
 
-    private ResponseMapping<ImageGenerations<B64EncodedImageUrlGeneration>> b64Image(){
-        return new ResponseMapping<>() {
+    private ResponseMapping<ImageGenerations<ImageGeneration>> b64Image(){
+        var mapping = new ResponseMapping<ImageGenerations<ImageBase64Generation>>(){
+        };
+        return new ResponseMapping<>(mapping.getPojoType()) {
         };
     }
 

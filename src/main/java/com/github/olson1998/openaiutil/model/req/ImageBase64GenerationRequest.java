@@ -9,10 +9,10 @@ import static com.github.olson1998.openaiutil.model.chat.ResponseFormat.B64JSON;
 
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
-public class B64ImageUrlGenerationRequest extends CustomImageGenerationRequest{
+public class ImageBase64GenerationRequest extends CustomImageGenerationRequest{
 
     @Builder(builderMethodName = "b64Image")
-    public B64ImageUrlGenerationRequest(DalleModel model, String prompt, String size, String quality, Integer numberOfImages) {
+    public ImageBase64GenerationRequest(DalleModel model, String prompt, String size, String quality, Integer numberOfImages) {
         super(model, prompt, size, quality, numberOfImages, B64JSON);
     }
 }

@@ -1,12 +1,11 @@
 package com.github.olson1998.openaiutil.client;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.olson1998.http.ImageDownload;
 import com.github.olson1998.http.client.ReactiveRestClient;
+import com.github.olson1998.http.contract.ImageDownload;
 import com.github.olson1998.http.contract.WebResponse;
-import com.github.olson1998.openaiutil.model.ex.ChatCompletion;
-import com.github.olson1998.openaiutil.model.ex.ImageGeneration;
-import com.github.olson1998.openaiutil.model.ex.ImageGenerations;
+import com.github.olson1998.openaiutil.model.ex.*;
+import com.github.olson1998.openaiutil.model.req.ImageBase64GenerationRequest;
 import com.github.olson1998.openaiutil.model.req.ChatRequest;
 import com.github.olson1998.openaiutil.model.req.ImageGenerationRequest;
 import reactor.core.publisher.Flux;
@@ -16,7 +15,11 @@ public interface ChatGptReactiveClient {
 
     Mono<WebResponse<ChatCompletion>> postChatRequest(ChatRequest chatRequest);
 
-    <I extends ImageGeneration,G extends ImageGenerations<I>> Mono<WebResponse<G>> postImageGenerationRequest(ImageGenerationRequest imageGenerationRequest);
+    Mono<WebResponse<ImageGenerations<ImageGeneration>>> postImageGenerationRequest(ImageGenerationRequest imageGenerationRequest);
+
+    Mono<WebResponse<ImageGenerations<DefaultImageGeneration>>> postDefaultImageGenerationRequest(ImageGenerationRequest imageGenerationRequest);
+
+    Mono<WebResponse<ImageGenerations<ImageBase64Generation>>> postB64ImageGenerationRequest(ImageBase64GenerationRequest imageBase64GenerationRequest);
 
     Flux<ImageDownload> postImageGenerationRequestAndObtain(ImageGenerationRequest imageGenerationRequest);
 

@@ -1,17 +1,21 @@
 package com.github.olson1998.openaiutil.model.ex;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 @Getter
 @Setter
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
-public class B64EncodedImageUrlGeneration extends ImageGeneration {
+
+@NoArgsConstructor
+public class ImageBase64Generation extends ImageGeneration {
 
     @JsonProperty(value = "b64_json")
     private String b64Image;
+
+    public ImageBase64Generation(String revisedPrompt, String b64Image) {
+        super(revisedPrompt);
+        this.b64Image = b64Image;
+    }
 }
