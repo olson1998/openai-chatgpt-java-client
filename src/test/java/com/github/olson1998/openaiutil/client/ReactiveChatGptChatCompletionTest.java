@@ -37,13 +37,13 @@ class ReactiveChatGptChatCompletionTest extends ChatGptReactiveClientTest{
         then(reactiveRestClient).should().sendHttpRequest(webRequestArgumentCaptor.capture(), eq(ChatCompletion.class));
 
         assertThat(chatCompletionResponse).isNotNull();
-        var chatCompletion = chatCompletionResponse.body();
+        var chatCompletion = chatCompletionResponse.getBody();
         assertThat(chatCompletion).isNotNull().isEqualTo(CHAT_COMPLETION);
         var webRequest = webRequestArgumentCaptor.getValue();
-        assertThat(webRequest.httpMethod()).isEqualTo(POST);
-        var chatReq = webRequest.body();
+        assertThat(webRequest.getHttpMethod()).isEqualTo(POST);
+        var chatReq = webRequest.getBody();
         assertThat(chatReq).isNotNull().isEqualTo(CHAT_REQUEST);
-        assertThat(webRequest.httpHeaders())
+        assertThat(webRequest.getHttpHeaders())
                 .isNotNull()
                 .containsEntry(ACCEPT, List.of(APPLICATION_JSON.getMimeType()));
     }

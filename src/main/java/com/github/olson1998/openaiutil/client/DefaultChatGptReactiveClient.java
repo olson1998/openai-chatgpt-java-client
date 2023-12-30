@@ -97,7 +97,7 @@ class DefaultChatGptReactiveClient implements ChatGptReactiveClient {
     @Override
     public Flux<ImageDownload> postImageGenerationRequestAndObtain(ImageGenerationRequest imageGenerationRequest) {
         var imageGenerationResponseMono = postImageGenerationRequest(imageGenerationRequest)
-                .map(WebResponse::body)
+                .map(WebResponse::getBody)
                 .map(ImageGenerations::getData)
                 .onErrorStop();
         return imageGenerationResponseMono.flatMapMany(Flux::fromArray)
@@ -122,7 +122,7 @@ class DefaultChatGptReactiveClient implements ChatGptReactiveClient {
                 .build();
         return reactiveRestClient.sendHttpRequest(webRequest, BufferedImage.class)
                 .onErrorContinue(((throwable, o) -> {}))
-                .map(WebResponse::body)
+                .map(WebResponse::getBody)
                 .map(image -> new ImageDownload(uri, image));
     }
 

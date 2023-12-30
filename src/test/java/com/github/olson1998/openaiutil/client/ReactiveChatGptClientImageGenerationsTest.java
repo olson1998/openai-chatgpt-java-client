@@ -77,11 +77,11 @@ class ReactiveChatGptClientImageGenerationsTest extends ChatGptReactiveClientTes
 
         var webRequest = webRequestArgumentCaptor.getValue();
         assertThat(webRequest).isNotNull();
-        assertThat(webRequest.httpMethod()).isEqualTo(POST);
-        assertThat(webRequest.httpHeaders())
+        assertThat(webRequest.getHttpMethod()).isEqualTo(POST);
+        assertThat(webRequest.getHttpHeaders())
                 .containsEntry(CONTENT_TYPE, List.of(APPLICATION_JSON.getMimeType()));
         assertThat(response).isNotNull();
-        var imageGenerations = response.body();
+        var imageGenerations = response.getBody();
         assertThat(imageGenerations).isNotNull();
         var imageGenerationsData =imageGenerations.getData();
         assertThat(imageGenerationsData).isNotNull().hasSize(1);
@@ -106,11 +106,11 @@ class ReactiveChatGptClientImageGenerationsTest extends ChatGptReactiveClientTes
 
         var webRequest = webRequestArgumentCaptor.getValue();
         assertThat(webRequest).isNotNull();
-        assertThat(webRequest.httpMethod()).isEqualTo(POST);
-        assertThat(webRequest.httpHeaders())
+        assertThat(webRequest.getHttpMethod()).isEqualTo(POST);
+        assertThat(webRequest.getHttpHeaders())
                 .containsEntry(CONTENT_TYPE, List.of(APPLICATION_JSON.getMimeType()));
         assertThat(imageGenerationResponse).isNotNull();
-        var imageGeneration = imageGenerationResponse.body();
+        var imageGeneration = imageGenerationResponse.getBody();
         assertThat(imageGeneration).isNotNull();
         var imageGenerations = imageGeneration.getData();
         assertThat(imageGenerations).isNotNull().hasSize(1);
@@ -170,8 +170,8 @@ class ReactiveChatGptClientImageGenerationsTest extends ChatGptReactiveClientTes
         assertThat(imageURI).isNotNull();
         var imageObtainWebRequest = webRequestArgumentCaptor.getValue();
         assertThat(imageObtainWebRequest).isNotNull();
-        assertThat(imageObtainWebRequest.httpMethod()).isEqualTo(GET);
-        assertThat(imageObtainWebRequest.uri()).isEqualTo(imageURI);
+        assertThat(imageObtainWebRequest.getHttpMethod()).isEqualTo(GET);
+        assertThat(imageObtainWebRequest.getUri()).isEqualTo(imageURI);
     }
 
     private void verifyB64ImageUrlGenerationRequestExecuted(ImageBase64GenerationRequest imageBase64GenerationRequest){
@@ -188,11 +188,11 @@ class ReactiveChatGptClientImageGenerationsTest extends ChatGptReactiveClientTes
 
         var webRequest = webRequestArgumentCaptor.getValue();
         assertThat(webRequest).isNotNull();
-        assertThat(webRequest.httpMethod()).isEqualTo(POST);
-        assertThat(webRequest.httpHeaders())
+        assertThat(webRequest.getHttpMethod()).isEqualTo(POST);
+        assertThat(webRequest.getHttpHeaders())
                 .containsEntry(CONTENT_TYPE, List.of(APPLICATION_JSON.getMimeType()));
         assertThat(imageGenerationWebResponse).isNotNull();
-        var imageGeneration = imageGenerationWebResponse.body();
+        var imageGeneration = imageGenerationWebResponse.getBody();
         assertThat(imageGeneration).isNotNull();
         var imageGenerations = imageGeneration.getData();
         assertThat(imageGenerations).isNotNull().hasSize(1);
@@ -212,11 +212,11 @@ class ReactiveChatGptClientImageGenerationsTest extends ChatGptReactiveClientTes
 
         var webRequest = webRequestArgumentCaptor.getValue();
         assertThat(webRequest).isNotNull();
-        assertThat(webRequest.httpMethod()).isEqualTo(POST);
-        assertThat(webRequest.httpHeaders())
+        assertThat(webRequest.getHttpMethod()).isEqualTo(POST);
+        assertThat(webRequest.getHttpHeaders())
                 .containsEntry(CONTENT_TYPE, List.of(APPLICATION_JSON.getMimeType()));
         assertThat(imageGenerationWebResponse).isNotNull();
-        var imageGeneration = imageGenerationWebResponse.body();
+        var imageGeneration = imageGenerationWebResponse.getBody();
         assertThat(imageGeneration).isNotNull();
         var imageGenerations = imageGeneration.getData();
         assertThat(imageGenerations).isNotNull().hasSize(1);
@@ -238,11 +238,11 @@ class ReactiveChatGptClientImageGenerationsTest extends ChatGptReactiveClientTes
 
         var webRequest = webRequestArgumentCaptor.getValue();
         assertThat(webRequest).isNotNull();
-        assertThat(webRequest.httpMethod()).isEqualTo(POST);
-        assertThat(webRequest.httpHeaders())
+        assertThat(webRequest.getHttpMethod()).isEqualTo(POST);
+        assertThat(webRequest.getHttpHeaders())
                 .containsEntry(CONTENT_TYPE, List.of(APPLICATION_JSON.getMimeType()));
         assertThat(imageGenerationResponse).isNotNull();
-        var imageGeneration = imageGenerationResponse.body();
+        var imageGeneration = imageGenerationResponse.getBody();
         assertThat(imageGeneration).isNotNull();
         var imageGenerations = imageGeneration.getData();
         assertThat(imageGenerations).isNotNull().hasSize(1);

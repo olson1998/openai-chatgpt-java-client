@@ -16,15 +16,15 @@ public class OpenAiErrorResponseException extends OpenAiResponseException {
 
     public static OpenAiErrorResponseException ofDeserializedError(WebResponse<Error>errorWebResponse){
         var msg = "Http request failed, target: 'OpenAi API', status code: %s, deserialized error message:\n- %s".formatted(
-                errorWebResponse.statusCode(),
-                errorWebResponse.body()
+                errorWebResponse.getStatusCode(),
+                errorWebResponse.getBody()
         );
         return new OpenAiErrorResponseException(msg, errorWebResponse);
     }
 
     public static OpenAiErrorResponseException of(WebResponse<?>errorWebResponse){
         var msg = "Http request failed, target: 'OpenAi API', status code: %s".formatted(
-                errorWebResponse.statusCode()
+                errorWebResponse.getHttpHeaders()
         );
         return new OpenAiErrorResponseException(msg, errorWebResponse);
     }
