@@ -1,0 +1,17 @@
+package com.github.olson1998.openai.model.chat;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
+@Getter
+@JsonFormat(shape = JsonFormat.Shape.OBJECT)
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+public enum ResponseFormat {
+
+    JSON_OBJECT("json_object"),
+    B64JSON("b64_json");
+
+    private final String type;
+}
