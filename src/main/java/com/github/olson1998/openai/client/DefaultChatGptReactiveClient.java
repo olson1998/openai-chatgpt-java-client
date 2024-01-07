@@ -64,7 +64,7 @@ class DefaultChatGptReactiveClient implements ChatGptReactiveClient {
     }
 
     @Override
-    public Mono<WebResponse<ImageGenerations<DefaultImageGeneration>>> postDefaultImageGenerationRequest(ImageGenerationRequest imageGenerationRequest) {
+    public Mono<WebResponse<ImageGenerations<ImageURLGeneration>>> postDefaultImageGenerationRequest(ImageGenerationRequest imageGenerationRequest) {
         var request = ImageGenerationRequest.builder()
                 .model(imageGenerationRequest.getModel())
                 .numberOfImages(imageGenerationRequest.getNumberOfImages())
@@ -78,7 +78,7 @@ class DefaultChatGptReactiveClient implements ChatGptReactiveClient {
                 .contentType(APPLICATION_JSON)
                 .body(request)
                 .build();
-        return reactiveRestClient.sendHttpRequest(webRequest, new ResponseMapping<ImageGenerations<DefaultImageGeneration>>() {
+        return reactiveRestClient.sendHttpRequest(webRequest, new ResponseMapping<ImageGenerations<ImageURLGeneration>>() {
         }).onErrorMap(HttpResponseException.class, chatGptErrorHandler::doHandleHttpResponseException);
     }
 
@@ -100,13 +100,13 @@ class DefaultChatGptReactiveClient implements ChatGptReactiveClient {
                 .map(WebResponse::getBody)
                 .map(ImageGenerations::getData)
                 .onErrorStop();
-        return imageGenerationResponseMono.flatMapMany(Flux::fromArray)
+        return imageGenerationResponseMono.flatMapMany(Flux::fromIterable)
                 .flatMap(this::obtainImageGeneration);
     }
 
     private Mono<ImageDownload> obtainImageGeneration(ImageGeneration imageGeneration){
-        if(imageGeneration instanceof DefaultImageGeneration defaultImageGeneration){
-            return getImageGeneration(defaultImageGeneration);
+        if(imageGeneration instanceof ImageURLGeneration imageURLGeneration){
+            return getImageGeneration(imageURLGeneration);
         } else if (imageGeneration instanceof ImageBase64Generation imageBase64Generation) {
             return readImageFromB64(imageBase64Generation);
         }else {
@@ -114,8 +114,8 @@ class DefaultChatGptReactiveClient implements ChatGptReactiveClient {
         }
     }
 
-    private Mono<ImageDownload> getImageGeneration(DefaultImageGeneration defaultImageGeneration){
-        var uri = defaultImageGeneration.getUrl();
+    private Mono<ImageDownload> getImageGeneration(ImageURLGeneration imageURLGeneration){
+        var uri = imageURLGeneration.getUrl();
         var webRequest = WebRequest.builder()
                 .uri(uri)
                 .httpMethod(GET)
@@ -156,7 +156,7 @@ class DefaultChatGptReactiveClient implements ChatGptReactiveClient {
     }
 
     private ResponseMapping<ImageGenerations<ImageGeneration>> defaultImageGeneration(){
-        var mapping = new ResponseMapping<ImageGenerations<DefaultImageGeneration>>(){
+        var mapping = new ResponseMapping<ImageGenerations<ImageURLGeneration>>(){
         };
         return new ResponseMapping<>(mapping.getPojoType()) {
         };

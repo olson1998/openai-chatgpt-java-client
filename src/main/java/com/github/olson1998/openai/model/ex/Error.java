@@ -1,12 +1,18 @@
 package com.github.olson1998.openai.model.ex;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter
+@ToString
+@EqualsAndHashCode
 public class Error {
 
-    private ErrorMessage error;
+    private final ErrorMessage message;
 
+    @JsonCreator
+    public Error(@JsonProperty(value = "error") ErrorMessage message) {
+        this.message = message;
+    }
 }

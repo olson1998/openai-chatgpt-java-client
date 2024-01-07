@@ -6,10 +6,10 @@ import lombok.experimental.UtilityClass;
 
 import java.util.stream.Stream;
 
+import static com.github.olson1998.openai.model.chat.DalleModel.DALLE3;
+
 @UtilityClass
 public class ImageGenerationRequestTestModel {
-
-    public static final DalleModel DALLE_MODEL = DalleModel.DALLE3;
 
     public static final int NUMBER_OF_IMAGES = 1;
 
@@ -18,7 +18,7 @@ public class ImageGenerationRequestTestModel {
     public static final String SIZE ="1024x1024";
 
     public static final ImageGenerationRequest IMAGE_GENERATION_REQUEST = ImageGenerationRequest.builder()
-            .model(DALLE_MODEL)
+            .model(DALLE3)
             .numberOfImages(NUMBER_OF_IMAGES)
             .prompt(PROMPT)
             .size(SIZE)
@@ -26,14 +26,14 @@ public class ImageGenerationRequestTestModel {
 
     public static final CustomImageGenerationRequest CUSTOM_IMAGE_GENERATION_REQUEST = CustomImageGenerationRequest.custom()
             .responseFormat(ResponseFormat.B64JSON)
-            .model(DALLE_MODEL)
+            .model(DALLE3)
             .numberOfImages(NUMBER_OF_IMAGES)
             .prompt(PROMPT)
             .size(SIZE)
             .build();
 
     public static final ImageBase64GenerationRequest B_64_IMAGE_URL_GENERATION_REQUEST = ImageBase64GenerationRequest.b64Image()
-            .model(DALLE_MODEL)
+            .model(DALLE3)
             .numberOfImages(NUMBER_OF_IMAGES)
             .prompt(PROMPT)
             .size(SIZE)

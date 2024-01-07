@@ -1,31 +1,50 @@
 package com.github.olson1998.openai.model.ex;
 
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.ToString;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter
+@ToString
+@EqualsAndHashCode
 public class LogProb {
 
-    private String[] tokens;
+    private final List<String> tokens;
 
     @JsonProperty(value = "token_logprobs")
-    private double[] tokenLogprobs;
+    private final List<Double> tokenLogprobs;
 
     @JsonProperty(value = "top_logprobs")
-    private Map<String, Double> topLogprobs;
+    private final Map<String, Double> topLogProbs;
 
     @JsonProperty(value = "text_offsets")
-    private Integer[] textOffsets;
+    private final List<Integer> textOffsets;
 
-    @JsonAnyGetter
-    @JsonAnySetter
-    private Map<String, Object> unmappedProperties;
+    @JsonCreator
+    public LogProb(@JsonProperty(value = "tokens") String[] tokens,
+                   @JsonProperty(value = "token_logprobs") Double[] tokenLogProbs,
+                   @JsonProperty(value = "top_logprobs") Map<String, Double> topLogProbs,
+                   @JsonProperty(value = "text_offsets") Integer[] textOffsets) {
+        this.tokens = Optional.ofNullable(tokens)
+                .map(List::of)
+                .orElse(null);
+        this.tokenLogprobs = Optional.ofNullable(tokenLogProbs)
+                .map(List::of)
+                .orElse(null);
+        this.topLogProbs = Optional.ofNullable(topLogProbs)
+                .map(Collections::unmodifiableMap)
+                .orElse(null);
+        this.textOffsets = Optional.ofNullable(textOffsets)
+                .map(List::of)
+                .orElse(null);
+    }
+
+
 }

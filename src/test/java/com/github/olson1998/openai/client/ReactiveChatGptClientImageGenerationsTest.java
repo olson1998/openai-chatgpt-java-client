@@ -5,7 +5,7 @@ import com.github.olson1998.http.contract.ImageDownload;
 import com.github.olson1998.http.contract.WebRequest;
 import com.github.olson1998.http.serialization.ResponseMapping;
 import com.github.olson1998.openai.model.TestUtil;
-import com.github.olson1998.openai.model.ex.DefaultImageGeneration;
+import com.github.olson1998.openai.model.ex.ImageURLGeneration;
 import com.github.olson1998.openai.model.ex.ImageBase64Generation;
 import com.github.olson1998.openai.model.ex.ImageGeneration;
 import com.github.olson1998.openai.model.ex.ImageGenerations;
@@ -41,7 +41,7 @@ class ReactiveChatGptClientImageGenerationsTest extends ChatGptReactiveClientTes
 
     private static final TestUtil.TypeMapping IMAGE_GENERATIONS_DEFAULT_IMAGE_MAPPING = new TestUtil.TypeMapping(
             ImageGenerations.class,
-            new TestUtil.TypeMapping[]{new TestUtil.TypeMapping(DefaultImageGeneration.class, null)}
+            new TestUtil.TypeMapping[]{new TestUtil.TypeMapping(ImageURLGeneration.class, null)}
     );
 
     private static final TestUtil.TypeMapping IMAGE_GENERATIONS_B64_IMAGE_MAPPING = new TestUtil.TypeMapping(
@@ -53,7 +53,7 @@ class ReactiveChatGptClientImageGenerationsTest extends ChatGptReactiveClientTes
     private ArgumentCaptor<WebRequest> webRequestArgumentCaptor;
 
     @ParameterizedTest
-    @MethodSource("com.github.olson1998.openaiutil.model.req.ImageGenerationRequestTestModel#testImageGenerations")
+    @MethodSource("com.github.olson1998.openai.model.req.ImageGenerationRequestTestModel#testImageGenerations")
     void shouldExecuteExpectedRequest(ImageGenerationRequest imageGenerationRequest){
         if(imageGenerationRequest instanceof ImageBase64GenerationRequest imageBase64GenerationRequest){
             verifyB64ImageUrlGenerationRequestExecuted(imageBase64GenerationRequest);
@@ -85,18 +85,18 @@ class ReactiveChatGptClientImageGenerationsTest extends ChatGptReactiveClientTes
         assertThat(imageGenerations).isNotNull();
         var imageGenerationsData =imageGenerations.getData();
         assertThat(imageGenerationsData).isNotNull().hasSize(1);
-        var imageGeneration = imageGenerationsData[0];
+        var imageGeneration = imageGenerationsData.get(0);
         assertThat(imageGeneration).isNotNull();
         assertThat(imageGeneration.getB64Image()).isNotNull();
     }
 
     @ParameterizedTest
-    @MethodSource("com.github.olson1998.openaiutil.model.req.ImageGenerationRequestTestModel#testImageGenerations")
+    @MethodSource("com.github.olson1998.openai.model.req.ImageGenerationRequestTestModel#testImageGenerations")
     void shouldAlwaysSendRequestForDefaultImageGeneration(ImageGenerationRequest imageGenerationRequest){
         given(reactiveRestClient.sendHttpRequest(
                 any(WebRequest.class),
-                (ResponseMapping<ImageGenerations<DefaultImageGeneration>>) argThat(arg -> TestUtil.isResponseMappingForType(arg, IMAGE_GENERATIONS_DEFAULT_IMAGE_MAPPING)))
-        ).willReturn(Mono.just(TestUtil.webResponseOk(createTypedImageGeneration(new DefaultImageGeneration[]{DEFAULT_IMAGE_GENERATION}))));
+                (ResponseMapping<ImageGenerations<ImageURLGeneration>>) argThat(arg -> TestUtil.isResponseMappingForType(arg, IMAGE_GENERATIONS_DEFAULT_IMAGE_MAPPING)))
+        ).willReturn(Mono.just(TestUtil.webResponseOk(createTypedImageGeneration(new ImageURLGeneration[]{DEFAULT_IMAGE_GENERATION}))));
 
         var imageGenerationResponse = chatGptReactiveClient()
                 .postDefaultImageGenerationRequest(imageGenerationRequest)
@@ -114,8 +114,8 @@ class ReactiveChatGptClientImageGenerationsTest extends ChatGptReactiveClientTes
         assertThat(imageGeneration).isNotNull();
         var imageGenerations = imageGeneration.getData();
         assertThat(imageGenerations).isNotNull().hasSize(1);
-        var generation = imageGenerations[0];
-        assertThat(generation).isInstanceOf(DefaultImageGeneration.class);
+        var generation= imageGenerations.get(0);
+        assertThat(generation).isInstanceOf(ImageURLGeneration.class);
     }
 
     @Test
@@ -151,8 +151,8 @@ class ReactiveChatGptClientImageGenerationsTest extends ChatGptReactiveClientTes
         var reactiveHttpRequestOrder = Mockito.inOrder(reactiveRestClient);
         given(reactiveRestClient.sendHttpRequest(
                 any(WebRequest.class),
-                (ResponseMapping<ImageGenerations<DefaultImageGeneration>>) argThat(arg -> TestUtil.isResponseMappingForType(arg, IMAGE_GENERATIONS_DEFAULT_IMAGE_MAPPING)))
-        ).willReturn(Mono.just(TestUtil.webResponseOk(createTypedImageGeneration(new DefaultImageGeneration[]{DEFAULT_IMAGE_GENERATION}))));
+                (ResponseMapping<ImageGenerations<ImageURLGeneration>>) argThat(arg -> TestUtil.isResponseMappingForType(arg, IMAGE_GENERATIONS_DEFAULT_IMAGE_MAPPING)))
+        ).willReturn(Mono.just(TestUtil.webResponseOk(createTypedImageGeneration(new ImageURLGeneration[]{DEFAULT_IMAGE_GENERATION}))));
         given(reactiveRestClient.sendHttpRequest(any(WebRequest.class), eq(BufferedImage.class)))
                 .willReturn(Mono.just(TestUtil.webResponseOk(Base64ImageUtil.readBase64Image(IMAGE_BASE_64_GENERATION.getB64Image()).image())));
 
@@ -196,7 +196,7 @@ class ReactiveChatGptClientImageGenerationsTest extends ChatGptReactiveClientTes
         assertThat(imageGeneration).isNotNull();
         var imageGenerations = imageGeneration.getData();
         assertThat(imageGenerations).isNotNull().hasSize(1);
-        var generation = imageGenerations[0];
+        var generation = imageGenerations.get(0);
         assertThat(generation).isInstanceOf(ImageBase64Generation.class);
     }
 
@@ -220,7 +220,7 @@ class ReactiveChatGptClientImageGenerationsTest extends ChatGptReactiveClientTes
         assertThat(imageGeneration).isNotNull();
         var imageGenerations = imageGeneration.getData();
         assertThat(imageGenerations).isNotNull().hasSize(1);
-        var generation = imageGenerations[0];
+        var generation = imageGenerations.get(0);
         assertThat(generation).isInstanceOf(ImageBase64Generation.class);
     }
 
@@ -246,7 +246,7 @@ class ReactiveChatGptClientImageGenerationsTest extends ChatGptReactiveClientTes
         assertThat(imageGeneration).isNotNull();
         var imageGenerations = imageGeneration.getData();
         assertThat(imageGenerations).isNotNull().hasSize(1);
-        var generation = imageGenerations[0];
-        assertThat(generation).isInstanceOf(DefaultImageGeneration.class);
+        var generation = imageGenerations.get(0);
+        assertThat(generation).isInstanceOf(ImageURLGeneration.class);
     }
 }

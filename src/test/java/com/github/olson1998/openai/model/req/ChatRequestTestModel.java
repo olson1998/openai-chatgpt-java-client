@@ -3,7 +3,6 @@ package com.github.olson1998.openai.model.req;
 import com.github.olson1998.openai.model.chat.ChatModel;
 import com.github.olson1998.openai.model.chat.ResponseFormat;
 import com.github.olson1998.openai.model.ex.Message;
-import com.github.olson1998.openai.model.ex.UserMessage;
 import lombok.experimental.UtilityClass;
 
 import java.util.List;

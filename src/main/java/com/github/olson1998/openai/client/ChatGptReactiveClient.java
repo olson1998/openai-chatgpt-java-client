@@ -17,7 +17,7 @@ public interface ChatGptReactiveClient {
 
     Mono<WebResponse<ImageGenerations<ImageGeneration>>> postImageGenerationRequest(ImageGenerationRequest imageGenerationRequest);
 
-    Mono<WebResponse<ImageGenerations<DefaultImageGeneration>>> postDefaultImageGenerationRequest(ImageGenerationRequest imageGenerationRequest);
+    Mono<WebResponse<ImageGenerations<ImageURLGeneration>>> postDefaultImageGenerationRequest(ImageGenerationRequest imageGenerationRequest);
 
     Mono<WebResponse<ImageGenerations<ImageBase64Generation>>> postB64ImageGenerationRequest(ImageBase64GenerationRequest imageBase64GenerationRequest);
 

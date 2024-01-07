@@ -1,29 +1,31 @@
 package com.github.olson1998.openai.model.ex;
 
-import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
-import java.util.Map;
-
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter
+@ToString
+@EqualsAndHashCode
 public class ErrorMessage {
 
-    private String message;
+    private final String message;
 
-    private String type;
+    private final String type;
 
-    private String code;
+    private final String code;
 
     @JsonProperty(value = "param")
-    private Object parameter;
+    private final Object parameter;
 
-    @JsonAnySetter
-    @ToString.Exclude
-    private Map<String, Object> unmappedProperties;
+    @JsonCreator
+    public ErrorMessage(@JsonProperty(value = "message") String message,
+                        @JsonProperty(value = "type") String type,
+                        @JsonProperty(value = "code") String code,
+                        @JsonProperty(value = "parameter") Object parameter) {
+        this.message = message;
+        this.type = type;
+        this.code = code;
+        this.parameter = parameter;
+    }
 }

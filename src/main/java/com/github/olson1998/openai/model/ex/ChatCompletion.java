@@ -1,30 +1,55 @@
 package com.github.olson1998.openai.model.ex;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.github.olson1998.openai.model.chat.ChatModel;
+import lombok.*;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+import java.time.Instant;
+import java.util.List;
+import java.util.Optional;
+
+@Getter
+@ToString
+@EqualsAndHashCode
 public class ChatCompletion {
 
-    private String id;
+    private final String id;
 
-    private String object;
+    private final String object;
 
     @JsonProperty(value = "created")
-    private Long creationTimestamp;
+    private final Instant creationTimestamp;
 
-    private String model;
+    private final ChatModel model;
 
-    private Choice[] choices;
+    private final List<Choice> choices;
 
     @JsonProperty(value = "usage")
-    private TokenUsage tokenUsage;
+    private final TokenUsage tokenUsage;
 
     @JsonProperty(value = "system_fingerprint")
-    private String systemFingerprint;
+    private final String systemFingerprint;
 
+    @JsonCreator
+    public ChatCompletion(@JsonProperty(value = "id") String id,
+                          @JsonProperty(value = "object") String object,
+                          @JsonProperty(value = "created") Long creationTimestamp,
+                          @JsonProperty(value = "model") ChatModel model,
+                          @JsonProperty(value = "choices") Choice[] choices,
+                          @JsonProperty(value = "usage") TokenUsage tokenUsage,
+                          @JsonProperty(value = "system_fingerprint") String systemFingerprint) {
+        this.id = id;
+        this.object = object;
+        this.creationTimestamp = Optional.ofNullable(creationTimestamp)
+                .map(epochMilli -> epochMilli * 1000)
+                .map(Instant::ofEpochMilli)
+                .orElse(null);
+        this.model = model;
+        this.choices = Optional.ofNullable(choices)
+                .map(List::of)
+                .orElse(null);
+        this.tokenUsage = tokenUsage;
+        this.systemFingerprint = systemFingerprint;
+    }
 }

@@ -1,5 +1,6 @@
 package com.github.olson1998.openai.model.ex;
 
+import com.github.olson1998.openai.model.chat.ChatModel;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass
@@ -15,7 +16,7 @@ public class ChatCompletionTestModel {
             ID,
             null,
             System.currentTimeMillis(),
-            MODEL,
+            ChatModel.GPT40613,
             null,
             TOKEN_USAGE,
             null

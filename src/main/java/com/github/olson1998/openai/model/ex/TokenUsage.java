@@ -1,22 +1,31 @@
 package com.github.olson1998.openai.model.ex;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.ToString;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter
+@ToString
+@EqualsAndHashCode
 public class TokenUsage {
 
     @JsonProperty(value = "prompt_tokens")
-    private Long promptTokens;
+    private final Long promptTokens;
 
     @JsonProperty(value = "completion_tokens")
-    private Long completionTokens;
+    private final Long completionTokens;
 
     @JsonProperty(value = "total_tokens")
-    private Long totalTokens;
+    private final Long totalTokens;
 
+    @JsonCreator
+    public TokenUsage(@JsonProperty(value = "prompt_tokens") Long promptTokens,
+                      @JsonProperty(value = "completion_tokens") Long completionTokens,
+                      @JsonProperty(value = "total_tokens") Long totalTokens) {
+        this.promptTokens = promptTokens;
+        this.completionTokens = completionTokens;
+        this.totalTokens = totalTokens;
+    }
 }

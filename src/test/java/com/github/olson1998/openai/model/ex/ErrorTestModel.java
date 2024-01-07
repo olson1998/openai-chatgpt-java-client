@@ -15,7 +15,6 @@ public class ErrorTestModel {
             ERROR_MESSAGE_VALUE,
             ERROR_TYPE,
             null,
-            null,
             null
     );
 

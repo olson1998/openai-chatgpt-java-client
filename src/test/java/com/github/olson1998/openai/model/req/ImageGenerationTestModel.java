@@ -1,6 +1,6 @@
 package com.github.olson1998.openai.model.req;
 
-import com.github.olson1998.openai.model.ex.DefaultImageGeneration;
+import com.github.olson1998.openai.model.ex.ImageURLGeneration;
 import com.github.olson1998.openai.model.ex.ImageBase64Generation;
 import com.github.olson1998.openai.model.ex.ImageGeneration;
 import com.github.olson1998.openai.model.ex.ImageGenerations;
@@ -20,12 +20,12 @@ public class ImageGenerationTestModel {
 
     public static final URI IMAGE_URI = URI.create("http://mock.images/s3/png/image-1.png");
 
-    public static final DefaultImageGeneration DEFAULT_IMAGE_GENERATION = new DefaultImageGeneration(REVISED_PROMPT, IMAGE_URI);
+    public static final ImageURLGeneration DEFAULT_IMAGE_GENERATION = new ImageURLGeneration(REVISED_PROMPT, IMAGE_URI);
 
     public static final ImageBase64Generation IMAGE_BASE_64_GENERATION = new ImageBase64Generation(REVISED_PROMPT, new String(loadTestImage()));
 
     public static final ImageGenerations<ImageGeneration> DEFAULT_IMAGE_IMAGE_GENERATIONS =
-            createImageGeneration(new DefaultImageGeneration[]{DEFAULT_IMAGE_GENERATION});
+            createImageGeneration(new ImageURLGeneration[]{DEFAULT_IMAGE_GENERATION});
 
     public static final ImageGenerations<ImageGeneration> IMAGE_BASE_64_IMAGE_GENERATIONS =
             createImageGeneration(new ImageBase64Generation[]{IMAGE_BASE_64_GENERATION});
